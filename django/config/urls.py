@@ -18,5 +18,5 @@ from django.contrib import admin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('webtoon/', include('webtoon.urls')),
+    path('', include('webtoon.urls')),
 ]

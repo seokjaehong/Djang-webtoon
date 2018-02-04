@@ -11,8 +11,10 @@ ROOT_DIR = os.path.dirname(PATH_MODULE)
 # data/ 폴더 경로
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
 
+
 class EpisodeData:
-    def __init__(self, episode_id, url_thumbnail, title, rating, created_date):
+    def __init__(self, webtoonname, episode_id, url_thumbnail, title, rating, created_date):
+        self.webtoonname = webtoonname
         self.episode_id = episode_id
         self.url_thumbnail = url_thumbnail
         self.title = title
@@ -20,7 +22,7 @@ class EpisodeData:
         self.created_date = created_date
 
     def __str__(self):
-        return f'id:{self.episode_id} | 타이틀:{self.title} | 발매일:{self.created_date} | 평점: {self.rating}'
+        return f'웹툰이름 : {self. webtoonname} id:{self.episode_id} | 타이틀:{self.title} | 발매일:{self.created_date} | 평점: {self.rating}'
 
 
 def get_episode_list(webtoon_id, page, refresh_html = True):
@@ -53,10 +55,16 @@ def get_episode_list(webtoon_id, page, refresh_html = True):
         return
 
     soup = BeautifulSoup(response.text, 'lxml')
-    viewlist = soup.select('div#content table.viewList > tr' )
+
+    # basicinfo = soup.select('div.comicinfo > div.detail h2')
+
+    # webtoonname = re.search(r"(.*?)\>\s\t(.*?)\<",basicinfo,re.DOTALL).group(2)
+
+    # webtoonname= r
+    webtoonname='빈칸'
 
 
-
+    viewlist = soup.select('div#content table.viewList > tr')
     result = list()
     for tr in viewlist:
         title = tr.find('td', class_="title").find('a').text
@@ -66,7 +74,7 @@ def get_episode_list(webtoon_id, page, refresh_html = True):
         rating = tr.find('div', class_='rating_type').find('strong').text
         created_date = tr.find('td', class_='num').text
 
-        episodedata = EpisodeData(title=title, episode_id=episode_id, url_thumbnail=url_thumbnail, rating=rating,
+        episodedata = EpisodeData(webtoonname=webtoonname, title=title, episode_id=episode_id, url_thumbnail=url_thumbnail, rating=rating,
                                   created_date=created_date)
         result.append(episodedata)
 

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>webtoon</title>
+</head>
+<body>
+<div>
+    <div>
+        webtoon list
+
+        {% block content %}
+        {% for webtoon in webtoonlist %}
+        <div>
+            <h2><a href="{% url 'webtoon:webtoon-detail' webtoon.pk%}">
+                {{ webtoon.title}}
+            </a>
+            </h2>
+
+
+        </div>
+        {% endfor %}
+        {% endblock %}
+    </div>
+</div>
+</body>
+</html>
