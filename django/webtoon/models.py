@@ -40,7 +40,7 @@ class Webtoon(models.Model):
 
         soup = BeautifulSoup(response.text, 'lxml')
 
-        banner = soup.select('tr', class_='band_banner')
+        banner = soup.find('tr', class_='band_banner')
         if banner:
             banner.extract()
 
@@ -55,7 +55,10 @@ class Webtoon(models.Model):
             rating = tr.find('div', class_='rating_type').find('strong').text
             created_date = tr.find('td', class_='num').text
 
-            Episode.objects.create(webtoon=self, title=title, episode_id=episode_id,
+
+            # if Episode.objects.filter(episode_id=episode_id, webtoon=self).exist() == False:
+            # 데이터가 있다면 update , 없다면 create -> 중복 제거
+            Episode.objects.udpate_or_create(webtoon=self, title=title, episode_id=episode_id,
                                       rating=rating,created_date=created_date)
             # episode_data_list.save()
 

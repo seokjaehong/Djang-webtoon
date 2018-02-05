@@ -27,7 +27,6 @@ def webtoon_detail(request, pk):
     context = {
         'webtoon': webtoon
     }
-
     return render(request, 'webtoon/detail.html', context)
     '''
     webtoon episode 목록 보여주기
