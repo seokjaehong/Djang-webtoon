@@ -22,12 +22,12 @@ class Webtoon(models.Model):
     def __str__(self):
         return self.title
 
-    def get_episode_list(self, refresh_html=True):
+    def get_episode_list(self,webtoon_id, refresh_html=True):
         '''
          """웹에서 크롤링 한 결과로 이 Webtoon에 속하는 Episode들을 생성해준다"""
         :return:
         '''
-        webtoon_id = '703835' #1인용기분
+        # webtoon_id = '703835' #1인용기분
         page = 1
 
         url = "https://comic.naver.com/webtoon/list.nhn"
@@ -36,8 +36,6 @@ class Webtoon(models.Model):
             'page': page
         }
         response = requests.get(url, parameter)
-        source = response.text
-
         soup = BeautifulSoup(response.text, 'lxml')
 
         banner = soup.find('tr', class_='band_banner')
@@ -55,10 +53,13 @@ class Webtoon(models.Model):
             rating = tr.find('div', class_='rating_type').find('strong').text
             created_date = tr.find('td', class_='num').text
 
+            # Episode.objects.create(webtoon=self, title=title, episode_id=episode_id,
+            #                                  rating=rating, created_date=created_date)
+
 
             # if Episode.objects.filter(episode_id=episode_id, webtoon=self).exist() == False:
-            # 데이터가 있다면 update , 없다면 create -> 중복 제거
-            Episode.objects.udpate_or_create(webtoon=self, title=title, episode_id=episode_id,
+            # 데이터가 있다면 pass , 없다면 create -> 중복 제거
+            Episode.objects.get_or_create(webtoon=self, title=title, episode_id=episode_id,
                                       rating=rating,created_date=created_date)
             # episode_data_list.save()
 
