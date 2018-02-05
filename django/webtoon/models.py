@@ -40,6 +40,10 @@ class Webtoon(models.Model):
 
         soup = BeautifulSoup(response.text, 'lxml')
 
+        banner = soup.select('tr', class_='band_banner')
+        if banner:
+            banner.extract()
+
         viewlist = soup.select('div#content table.viewList > tr')
         result = list()
         for tr in viewlist:
@@ -51,7 +55,7 @@ class Webtoon(models.Model):
             rating = tr.find('div', class_='rating_type').find('strong').text
             created_date = tr.find('td', class_='num').text
 
-            Episode.objects.create(webtoon_id=self.pk, title=title, episode_id=episode_id,
+            Episode.objects.create(webtoon=self, title=title, episode_id=episode_id,
                                       rating=rating,created_date=created_date)
             # episode_data_list.save()
 

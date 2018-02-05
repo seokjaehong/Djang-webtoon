@@ -14,9 +14,7 @@ DATA_DIR = os.path.join(ROOT_DIR, 'data')
 
 
 class EpisodeData:
-    def __init__(self, webtoonname,webtoonID, episode_id, url_thumbnail, title, rating, created_date):
-        self.webtoonname = webtoonname
-        self.webtoonID= webtoonID
+    def __init__(self, episode_id, url_thumbnail, title, rating, created_date):
         self.episode_id = episode_id
         self.url_thumbnail = url_thumbnail
         self.title = title
@@ -24,7 +22,7 @@ class EpisodeData:
         self.created_date = created_date
 
     def __str__(self):
-        return f'웹툰:{self.webtoonname} |웹툰ID:{self.webtoonID} | id:{self.episode_id} | 타이틀:{self.title} | 평점: {self.rating} | 발매일:{self.created_date} '
+        return f'id:{self.episode_id} | 타이틀:{self.title} | 평점: {self.rating} | 발매일:{self.created_date} '
 
 
 def get_episode_list(webtoon_id, page, refresh_html=True):
@@ -54,8 +52,11 @@ def get_episode_list(webtoon_id, page, refresh_html=True):
 
     soup = BeautifulSoup(response.text, 'lxml')
 
-    webtoonname = soup.find('div',class_='comicinfo').find('div', class_='thumb').find('a').find('img').get('alt')
-    webtoonID = webtoon_id
+    banner = soup.find('tr', class_='band_banner')
+    if banner:
+        banner.extract()
+    # webtoonname = soup.find('div',class_='comicinfo').find('div', class_='thumb').find('a').find('img').get('alt')
+    # webtoonID = webtoon_id
 
     viewlist = soup.select('div#content table.viewList > tr')
     # viewlist = soup.find('div',attrs={'id':'content'}).findAll('table', class_='viewList').findAll('tr')
@@ -69,7 +70,7 @@ def get_episode_list(webtoon_id, page, refresh_html=True):
         rating = tr.find('div', class_='rating_type').find('strong').text
         created_date = tr.find('td', class_='num').text
 
-        episodedata = EpisodeData(webtoonname=webtoonname,webtoonID=webtoonID, title=title, episode_id=episode_id,
+        episodedata = EpisodeData(title=title, episode_id=episode_id,
                                   url_thumbnail=url_thumbnail, rating=rating,
                                   created_date=created_date)
         result.append(episodedata)
