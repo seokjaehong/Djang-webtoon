@@ -5,24 +5,16 @@ import re
 import requests
 from bs4 import BeautifulSoup, NavigableString
 
-# utils가 있는
-PATH_MODULE = os.path.abspath(__file__)
-
-# 프로젝트 컨테이너 폴더 경로
-ROOT_DIR = os.path.dirname(PATH_MODULE)
-
-# data/ 폴더 경로
-DATA_DIR = os.path.join(ROOT_DIR, 'data')
 
 # Create your models here.
 class Webtoon(models.Model):
     webtoon_id = models.CharField(max_length=200)
-    title  = models.CharField(max_length=200)
+    title = models.CharField(max_length=200)
 
     def __str__(self):
         return self.title
 
-    def get_episode_list(self,webtoon_id, refresh_html=True):
+    def get_episode_list(self, webtoon_id, refresh_html=True):
         '''
          """웹에서 크롤링 한 결과로 이 Webtoon에 속하는 Episode들을 생성해준다"""
         :return:
@@ -46,7 +38,6 @@ class Webtoon(models.Model):
         result = list()
         for tr in viewlist:
             title = tr.find('td', class_="title").find('a').text
-            # title = tr.find('td', class_="title").find('a').find('img')
             episode_id_meta = tr.find('a').get('href')
             episode_id = re.search(r"=.*?=(.*?)&", episode_id_meta, re.DOTALL).group(1)
             url_thumbnail = tr.find('a').find('img').get('src')
@@ -56,19 +47,18 @@ class Webtoon(models.Model):
             # Episode.objects.create(webtoon=self, title=title, episode_id=episode_id,
             #                                  rating=rating, created_date=created_date)
 
-
             # if Episode.objects.filter(episode_id=episode_id, webtoon=self).exist() == False:
             # 데이터가 있다면 pass , 없다면 create -> 중복 제거
             Episode.objects.get_or_create(webtoon=self, title=title, episode_id=episode_id,
-                                      rating=rating,created_date=created_date)
-            # episode_data_list.save()
+                                          rating=rating, created_date=created_date)
+
 
 class Episode(models.Model):
     webtoon = models.ForeignKey(Webtoon, on_delete=models.CASCADE)
-    episode_id  = models.CharField(max_length=200)
-    title  = models.CharField(max_length=200)
-    rating  = models.CharField(max_length=200)
-    created_date  = models.CharField(max_length=200)
+    episode_id = models.CharField(max_length=200)
+    title = models.CharField(max_length=200)
+    rating = models.CharField(max_length=200)
+    created_date = models.CharField(max_length=200)
 
     def __str__(self):
         return f'{self.episode_id} {self.webtoon} | {self.title}'
